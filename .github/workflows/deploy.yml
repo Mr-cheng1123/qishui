@@ -1,0 +1,57 @@
+name: Deploy
+
+on:
+  push:
+    branches: [ main, master ]
+
+jobs:
+  deploy-server:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20'
+    
+    - name: Deploy to Render
+      # 需要设置 RENDER_SERVICE_ID 和 RENDER_API_KEY 密钥
+      run: |
+        echo "部署到 Render..."
+        # 使用 Render CLI 或 API 部署
+        # 详见: https://render.com/docs/deploy-hooks
+    
+  deploy-frontend:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20'
+    
+    - name: Install dependencies
+      run: |
+        cd app
+        npm install
+    
+    - name: Build
+      run: |
+        cd app
+        npm run build
+      env:
+        VITE_SERVER_URL: ${{ secrets.SERVER_URL }}
+    
+    - name: Deploy to Netlify
+      # 需要设置 NETLIFY_AUTH_TOKEN 和 NETLIFY_SITE_ID 密钥
+      uses: nwtgck/actions-netlify@v2.0
+      with:
+        publish-dir: './app/dist'
+        production-branch: main
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        deploy-message: "Deploy from GitHub Actions"
+      env:
+        NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+        NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
