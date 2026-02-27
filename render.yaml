@@ -4,7 +4,4 @@ services:
     runtime: node
     buildCommand: cd server && npm install && cd ../app && npm install && npm run build
     startCommand: cd server && npm start
-    envVars:
-      - key: PORT
-        value: 3001
     plan: free
