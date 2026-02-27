@@ -234,8 +234,6 @@ function startNewRound(room) {
 
 // 应用事件卡效果
 function applyEventCardEffect(room) {
-  if (!room.eventCard) return;
-  
   const playerCount = room.players.length;
   const baseTokens = GAME_CONFIG.actionTokensByPlayerCount[playerCount] || 
     { acceptBribe: 1, inspect: 1, arrest: 1 };
@@ -244,28 +242,30 @@ function applyEventCardEffect(room) {
   let inspect = baseTokens.inspect;
   let arrest = baseTokens.arrest;
   
-  switch (room.eventCard.effect) {
-    case 'night_shift':
-      acceptBribe++;
-      break;
-    case 'superior_officer':
-      inspect++;
-      break;
-    case 'tip_off':
-      arrest++;
-      break;
-    case 'breakage':
-      arrest = Math.max(0, arrest - 1);
-      room.legalLimit = 0;
-      break;
-    case 'birthday':
-      room.legalLimit = 2;
-      const guard = room.players.find(p => p.id === room.currentBorderGuardId);
-      if (guard) {
-        guard.bottleCaps += 2;
-        room.generalStock -= 2;
-      }
-      break;
+  if (room.eventCard) {
+    switch (room.eventCard.effect) {
+      case 'night_shift':
+        acceptBribe++;
+        break;
+      case 'superior_officer':
+        inspect++;
+        break;
+      case 'tip_off':
+        arrest++;
+        break;
+      case 'breakage':
+        arrest = Math.max(0, arrest - 1);
+        room.legalLimit = 0;
+        break;
+      case 'birthday':
+        room.legalLimit = 2;
+        const guard = room.players.find(p => p.id === room.currentBorderGuardId);
+        if (guard) {
+          guard.bottleCaps += 2;
+          room.generalStock -= 2;
+        }
+        break;
+    }
   }
   
   room.actionTokens = [

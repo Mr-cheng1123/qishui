@@ -404,7 +404,7 @@ export function GamePlay({
               <div className="flex justify-center gap-4 flex-wrap">
                 {room.actionTokens.map((token, index) => {
                   const isUsed = token.used;
-                  const canUse = !isUsed && room.phase === 'guard_action';
+                  const canUse = !isUsed && (room.phase === 'guard_action' || room.phase === 'bribe_reveal');
                   
                   return (
                     <button
